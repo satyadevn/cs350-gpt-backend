@@ -37,9 +37,9 @@ def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
         model="gpt-4.1-nano",
 #        messages=[{"role": "user", "content": payload.query_text}],  #only gpt
         messages = [
-            { "role" : "user", "content" : "Use the following lecture material to answer the question." }
-            { "role" : "system", "content" : context }
-            { "role" : "user", "content" : payload.query_text }]
+            { "role" : "user", "content" : "Use the following lecture material to answer the question." },
+            { "role" : "system", "content" : context },
+            { "role" : "user", "content" : payload.query_text }],
         max_tokens=500
     )
 
