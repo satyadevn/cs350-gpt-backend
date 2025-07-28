@@ -5,6 +5,7 @@ import models, schemas
 from dotenv import load_dotenv
 import os
 from openai import OpenAI
+from rag import get_relevant_chunks
 
 # Load env vars and set up OpenAI client
 load_dotenv()
@@ -29,10 +30,17 @@ def get_db():
 
 
 def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
+    retrieved = get_relevant_chunks ( payload.query_text )
+    context   = "\n\n".join ( retrieved )
+    
     response = client.chat.completions.create(
         model="gpt-4.1-nano",
-        messages=[{"role": "user", "content": payload.query_text}],
-        max_tokens=100
+#        messages=[{"role": "user", "content": payload.query_text}],  #only gpt
+        messages = [
+            { "role" : "user", "content" : "Use the following lecture material to answer the question." }
+            { "role" : "system", "content" : context }
+            { "role" : "user", "content" : payload.query_text }]
+        max_tokens=500
     )
 
     output_text = response.choices[0].message.content
