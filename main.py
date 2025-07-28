@@ -1,4 +1,5 @@
 from fastapi import FastAPI, Depends
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from db import SessionLocal, Base, engine
 import models, schemas
@@ -15,6 +16,14 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
+# prevent queries other than through the front end. You may disable this
+# for local tests.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://cs350-gpt-frontend.onrender.com"],
+    allow_methods=["POST"],
+    allow_headers=["*"]
+)
 
 # DB session dependency
 def get_db():
