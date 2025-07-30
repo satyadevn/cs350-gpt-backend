@@ -26,7 +26,7 @@ class Query ( Base ) :
     user_id       =       Column ( Integer, ForeignKey ( "users.id" ) )
     query_text    =       Column ( Text )
     response_text =       Column ( Text )
-    timestamp     =       Column ( DateTime, default=datetime.datetime.utcnow )
+    timestamp     =       Column ( DateTime, default=datetime.utcnow ) 
 
     user          =       relationship ( "User", back_populates = "queries" )
     
