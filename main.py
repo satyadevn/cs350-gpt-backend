@@ -1,17 +1,19 @@
-from fastapi import FastAPI, Depends
-from fastapi.middleware.cors import CORSMiddleware
-from sqlalchemy.orm import Session
-from db import SessionLocal, Base, engine
-import models, schemas
-from dotenv import load_dotenv
-import os
-from openai import OpenAI
-from rag import get_relevant_chunks
+from    fastapi         import FastAPI, Depends
+from    fastapi.middleware.cors import CORSMiddleware
+from    sqlalchemy.orm  import Session
+from    db              import SessionLocal, Base, engine
+import  models, schemas
+from    dotenv          import load_dotenv
+import  os
+from    openai          import OpenAI
+from    rag             import get_relevant_chunks
+import  requests        as      req
 
 # Load env vars and set up OpenAI client
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
+GOOGLE_CAPTCHA_SECRET = os.getenv("GOOGLE_CAPTCHA_SECRET")
 # Create tables
 models.Base.metadata.create_all(bind=engine)
 
@@ -39,6 +41,14 @@ def get_db():
 
 
 def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
+    verify_url = "https://www.google.com/recaptcha/api/siteverify"
+    res = req.post(verify_url, data={
+        "secret": GOOGLE_CAPTCHA_SECRET,
+        "response": payload.captcha_token
+    })
+
+    if not res.json().get("success"):
+        raise HTTPException(status_code=400, detail="Invalid CAPTCHA")
     retrieved = get_relevant_chunks ( payload.query_text )
     context   = "\n\n".join ( retrieved )
     
