@@ -6,24 +6,25 @@ from dotenv import load_dotenv
 import os
 import tiktoken
 
+#===================================================
 # Retrieval Augmented Generation
+#===================================================
 
-# === Setup ===
+
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
-
+OPENAI_API_KEY  = os.getenv("OPENAI_API_KEY")
+client          = OpenAI(api_key=OPENAI_API_KEY)
 EMBEDDING_MODEL = "text-embedding-3-small"
-encoder = tiktoken.encoding_for_model("gpt-4")
+encoder         = tiktoken.encoding_for_model("gpt-4")
 
-# === Load FAISS index and chunks ===
-index = faiss.read_index("course_index.faiss")
+#=== Load FAISS index and chunks ===
+index           = faiss.read_index("course_index.faiss")
 
 with open("chunks.pkl", "rb") as f:
-    mapping = pickle.load(f)
+    mapping     = pickle.load(f)
 
-chunks = mapping["chunks"]
-sources = mapping["sources"]
+chunks          = mapping["chunks"]
+sources         = mapping["sources"]
 
 # === Embed and search ===
 def get_relevant_chunks(query, top_k=5):

@@ -3,9 +3,12 @@ from	sqlalchemy.orm	import		relationship
 from	datetime	import		datetime
 from	db		import		Base
 
+#==============================================================
+# This contains all the database models for storing a log of all
+# the queries. 
+#==============================================================
 class QueryLog(Base):
     __tablename__ =       "queryLogs"
-
     id            = Column(Integer, primary_key=True, index=True)
     user_id       = Column(String, index=True)
     query_text    = Column(String)

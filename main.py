@@ -41,14 +41,16 @@ def get_db():
 
 
 def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
+
     # verify_url = "https://www.google.com/recaptcha/api/siteverify"
     # res = req.post(verify_url, data={
     #     "secret": GOOGLE_CAPTCHA_SECRET,
     #     "response": payload.captcha_token
     # })
-
     # if not res.json().get("success"):
     #     raise HTTPException(status_code=400, detail="Invalid CAPTCHA")
+
+
     retrieved = get_relevant_chunks ( payload.query_text )
     context   = "\n\n".join ( retrieved )
     
@@ -56,7 +58,8 @@ def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
         model="gpt-4.1-nano",
 #        messages=[{"role": "user", "content": payload.query_text}],  #only gpt
         messages = [
-            { "role" : "user", "content" : "Use the following lecture material to answer the question." },
+            { "role" : "user",
+              "content" : "Use the following lecture material to answer the question." },
             { "role" : "system", "content" : context },
             { "role" : "user", "content" : payload.query_text }],
         max_tokens=500
