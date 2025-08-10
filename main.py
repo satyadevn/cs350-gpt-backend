@@ -40,7 +40,7 @@ def get_db():
 
 
 
-def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
+def handle_query(payload: schemas.QueryRequest) # db: Session = Depends(get_db)):
 
     retrieved = get_relevant_chunks ( payload.query_text )
     context   = "\n\n".join ( retrieved )
@@ -60,13 +60,13 @@ def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
     input_tokens = response.usage.prompt_tokens
     output_tokens = response.usage.completion_tokens
 
-    db.add(models.QueryLog(
-        query_text=payload.query_text,
-        response_text=output_text,
-        input_tokens=input_tokens,
-        output_tokens=output_tokens,
-    ))
-    db.commit()
+    # db.add(models.QueryLog(
+    #     query_text=payload.query_text,
+    #     response_text=output_text,
+    #     input_tokens=input_tokens,
+    #     output_tokens=output_tokens,
+    # ))
+    # db.commit()
 
     return schemas.QueryResponse(
         response_text=output_text,
