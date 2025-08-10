@@ -40,7 +40,7 @@ def get_db():
 
 
 
-def handle_query(payload: schemas.QueryRequest) # db: Session = Depends(get_db)):
+def handle_query(payload: schemas.QueryRequest): # db: Session = Depends(get_db)):
 
     retrieved = get_relevant_chunks ( payload.query_text )
     context   = "\n\n".join ( retrieved )
