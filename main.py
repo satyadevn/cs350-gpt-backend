@@ -1,8 +1,9 @@
 from    fastapi         import FastAPI, Depends
-from    fastapi.middleware.cors import CORSMiddleware
-from    sqlalchemy.orm  import Session
-from    db              import SessionLocal, Base, engine
-import  models, schemas
+#from    fastapi.middleware.cors import CORSMiddleware
+#from    sqlalchemy.orm  import Session
+#from    db              import SessionLocal, Base, engine
+#import  models, schemas
+import  schemas
 from    dotenv          import load_dotenv
 import  os
 from    openai          import OpenAI
@@ -15,7 +16,7 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 #GOOGLE_CAPTCHA_SECRET = os.getenv("GOOGLE_CAPTCHA_SECRET")
 # Create tables
-models.Base.metadata.create_all(bind=engine)
+#models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 # prevent queries other than through the front end. You may disable this
