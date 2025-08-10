@@ -20,12 +20,12 @@ models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 # prevent queries other than through the front end. You may disable this
 # for local tests.
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://cs350-gpt-frontend.onrender.com"],
-    allow_methods=["POST"],
-    allow_headers=["*"]
-)
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=["https://cs350-gpt-frontend.onrender.com"],
+#     allow_methods=["POST"],
+#     allow_headers=["*"]
+# )
 
 # DB session dependency
 def get_db():
@@ -42,24 +42,15 @@ def get_db():
 
 def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
 
-    # verify_url = "https://www.google.com/recaptcha/api/siteverify"
-    # res = req.post(verify_url, data={
-    #     "secret": GOOGLE_CAPTCHA_SECRET,
-    #     "response": payload.captcha_token
-    # })
-    # if not res.json().get("success"):
-    #     raise HTTPException(status_code=400, detail="Invalid CAPTCHA")
-
-
     retrieved = get_relevant_chunks ( payload.query_text )
     context   = "\n\n".join ( retrieved )
     
     response = client.chat.completions.create(
         model="gpt-4.1-nano",
-#        messages=[{"role": "user", "content": payload.query_text}],  #only gpt
         messages = [
             { "role" : "user",
-              "content" : "Use the following lecture material to answer the question." },
+              "content" :
+              "Use the following lecture material to answer the question." },
             { "role" : "system", "content" : context },
             { "role" : "user", "content" : payload.query_text }],
         max_tokens=500
@@ -70,7 +61,6 @@ def handle_query(payload: schemas.QueryRequest, db: Session = Depends(get_db)):
     output_tokens = response.usage.completion_tokens
 
     db.add(models.QueryLog(
-        user_id=payload.user_id,
         query_text=payload.query_text,
         response_text=output_text,
         input_tokens=input_tokens,

@@ -9,7 +9,6 @@ from    pydantic        import  BaseModel
 class QueryRequest ( BaseModel ) :
     user_id      : str
     query_text   : str
-    captcha_code : str
 
 class QueryResponse( BaseModel ) :
     response_text : str
